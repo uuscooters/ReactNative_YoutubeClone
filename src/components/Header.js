@@ -3,10 +3,15 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import Constants from 'react-native-layout-constants';
+import {useDispatch, useSelector} from 'react-redux';
 
 export default function Header({}) {
   const navigation = useNavigation();
   const {colors} = useTheme();
+  const dispatch = useDispatch();
+  const currentTheme = useSelector(state => {
+    return state.myDarkMode;
+  });
   const myColor = colors.iconColor;
 
   return (
@@ -58,6 +63,9 @@ export default function Header({}) {
           type="font-awesome"
           size={28}
           color={myColor}
+          onPress={() =>
+            dispatch({type: 'change_theme', payload: !currentTheme})
+          }
         />
       </View>
     </View>

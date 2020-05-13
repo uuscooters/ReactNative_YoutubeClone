@@ -9,7 +9,7 @@
 import React from 'react';
 import {View} from 'react-native';
 import Constants from 'react-native-layout-constants';
-import {Icon, withTheme} from 'react-native-elements';
+import {Icon} from 'react-native-elements';
 import {
   NavigationContainer,
   DefaultTheme,
@@ -18,8 +18,8 @@ import {
 } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Provider} from 'react-redux';
-import {createStore} from 'redux';
+import {Provider, useSelector} from 'react-redux';
+import {createStore, combineReducers} from 'redux';
 
 import Home from './src/screens/Home';
 import Search from './src/screens/Search';
@@ -27,6 +27,7 @@ import VideoPlayer from './src/screens/VideoPlayer';
 import Explore from './src/screens/Explore';
 import Subscribe from './src/screens/Subscribe';
 import {reducer} from './src/reducers/reducer';
+import {themeReducer} from './src/reducers/themeReducer';
 
 const customeDarkTheme = {
   ...DarkTheme,
@@ -48,7 +49,11 @@ const customeDefaultTheme = {
   },
 };
 
-const store = createStore(reducer);
+const rootReducer = combineReducers({
+  cardData: reducer, //[]
+  myDarkMode: themeReducer, //false
+});
+const store = createStore(rootReducer);
 const Stact = createStackNavigator();
 const Tabs = createBottomTabNavigator();
 
@@ -77,8 +82,9 @@ const RootHome = () => {
       tabBarOptions={{
         activeTintColor: colors.tabIcon,
         inactiveTintColor: 'gray',
-        labelStyle: {marginBottom: 15},
+        labelStyle: {marginBottom: 10, fontSize: 18},
         style: {
+          elevation: 4,
           borderTopWidth: 10,
           height: '10%',
           borderTopColor: 'transparent',
@@ -91,17 +97,27 @@ const RootHome = () => {
   );
 };
 
-export default function App() {
+export default (App = () => {
   return (
     <Provider store={store}>
-      <NavigationContainer theme={customeDarkTheme}>
-        <Stact.Navigator headerMode="none">
-          <Stact.Screen name="rootHome" component={RootHome} />
-          <Stact.Screen name="search" component={Search} />
-          <Stact.Screen name="videoPlayer" component={VideoPlayer} />
-        </Stact.Navigator>
-      </NavigationContainer>
+      <Navigation />
     </Provider>
+  );
+});
+
+export function Navigation() {
+  let currentTheme = useSelector(state => {
+    return state.myDarkMode;
+  });
+  return (
+    <NavigationContainer
+      theme={currentTheme ? customeDarkTheme : customeDefaultTheme}>
+      <Stact.Navigator headerMode="none">
+        <Stact.Screen name="rootHome" component={RootHome} />
+        <Stact.Screen name="search" component={Search} />
+        <Stact.Screen name="videoPlayer" component={VideoPlayer} />
+      </Stact.Navigator>
+    </NavigationContainer>
     // <View style={{flex: 1, marginTop: Constants.statusBarHeight}}>
     //   {/* <Home /> */}
     //   <Search />

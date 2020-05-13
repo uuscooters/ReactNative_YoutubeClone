@@ -28,7 +28,7 @@ const SearchScreen = () => {
   //this is lokal state const [miniCardData, setMiniCard] = useState([]);
   const dispatch = useDispatch();
   const miniCardData = useSelector(state => {
-    return state;
+    return state.cardData;
   });
   const [loading, setLoading] = useState(false);
   const fectData = () => {
@@ -83,7 +83,7 @@ const SearchScreen = () => {
           name="md-mic"
           type="ionicon"
           size={15}
-          iconStyle={{marginVertical: 10, color: myColor}}
+          iconStyle={{marginVertical: 10}}
         />
         <Icon
           name="md-options"
